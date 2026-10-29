@@ -11,7 +11,7 @@ export interface Task {
   priority: TaskPriority;
   category?: string | null;
   deadline?: string | null;
-  reminderTime?: string | null; // e.g. "2026-10-30T15:00" or time string
+  reminderTime?: string | null;
   createdAt: string;
   updatedAt?: string;
 }
@@ -32,12 +32,21 @@ export interface SpiderSenseAnalysis {
   workloadStats: {
     workCount: number;
     personalCount: number;
-    imbalanceRatio: number; // e.g. 0.85 = 85% work
-    equilibriumScore: number; // 0 - 100
+    imbalanceRatio: number;
+    equilibriumScore: number;
     diagnosis: string;
   };
   spiderWisdomQuote: string;
-  providerUsed: 'openai' | 'gemini' | 'heuristic-engine';
+  providerUsed: 'openai' | 'gemini' | 'ollama-local' | 'heuristic-engine';
+  multimodal: {
+    imageProcessed: boolean;
+    detectedType?: 'handwritten-notes' | 'whiteboard' | 'sticky-note' | 'screenshot' | 'text-only';
+  };
+  agentExecution: {
+    agentName: string;
+    toolsCalled: string[];
+    contextRetrievedCount: number;
+  };
 }
 
 export interface TaskFilterOptions {

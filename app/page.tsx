@@ -288,6 +288,15 @@ export default function SpiderSenseApp() {
           },
           spiderWisdomQuote: 'With great responsibility comes great responsibility... to yourself.',
           providerUsed: 'heuristic-engine',
+          multimodal: {
+            imageProcessed: false,
+            detectedType: 'text-only',
+          },
+          agentExecution: {
+            agentName: 'Spider-Sense Work-Life Autonomous Agent',
+            toolsCalled: ['retrieve_task_context', 'route_dual_persona', 'evaluate_equilibrium_burnout'],
+            contextRetrievedCount: tasks.length,
+          },
         });
         setIsWarningModalOpen(true);
       }
