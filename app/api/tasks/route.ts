@@ -47,6 +47,7 @@ export async function POST(request: NextRequest) {
       priority: body.priority || 'MEDIUM',
       category: body.category,
       deadline: body.deadline,
+      reminderTime: body.reminderTime,
       status: body.status || 'PENDING',
     });
 

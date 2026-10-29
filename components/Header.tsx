@@ -1,19 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TaskMode } from '@/lib/types';
 import { sound } from '@/lib/sound';
+import { reminderService } from '@/lib/notifications';
 import { 
   Camera, 
   Pizza, 
-  Backpack, 
   ShieldAlert, 
   Volume2, 
   VolumeX, 
   RotateCcw, 
-  Sparkles, 
   Layers, 
-  Eye
+  Bell,
+  BellRing,
+  Briefcase,
+  Home
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -25,6 +27,7 @@ interface HeaderProps {
   isResetting: boolean;
   equilibriumScore: number;
   isWarning: boolean;
+  onTestReminder: () => void;
 }
 
 export function Header({
@@ -36,12 +39,27 @@ export function Header({
   isResetting,
   equilibriumScore,
   isWarning,
+  onTestReminder,
 }: HeaderProps) {
   const [soundEnabled, setSoundEnabled] = useState(sound.enabled);
+  const [notifPermission, setNotifPermission] = useState<string>('default');
+
+  useEffect(() => {
+    setNotifPermission(reminderService.getPermissionStatus());
+  }, []);
 
   const handleToggleSound = () => {
     const newState = sound.toggle();
     setSoundEnabled(newState);
+  };
+
+  const handleEnableNotifications = async () => {
+    const granted = await reminderService.requestPermission();
+    setNotifPermission(granted ? 'granted' : 'denied');
+    if (granted) {
+      sound.playWebThwip();
+      reminderService.testNotification();
+    }
   };
 
   const isSpider = currentMode === 'SPIDER';
@@ -56,12 +74,12 @@ export function Header({
       {isWarning && (
         <div className="bg-gradient-to-r from-red-600 via-rose-500 to-red-600 text-white text-xs font-bold py-1.5 px-4 text-center tracking-wider animate-pulse flex items-center justify-center gap-2 border-b border-red-700 shadow-sm">
           <span className="inline-block animate-bounce">⚡</span>
-          <span>SPIDER-SENSE TINGLING: WORK-LIFE IMBALANCE DETECTED! (EQUILIBRIUM: {equilibriumScore}%)</span>
+          <span>SPIDER-SENSE ALERT: WORKAHOLIC OVERLOAD DETECTED! (EQUILIBRIUM: {equilibriumScore}%)</span>
           <span className="inline-block animate-bounce">⚡</span>
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
         
         {/* Brand / Logo */}
         <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
@@ -71,19 +89,18 @@ export function Header({
                 ? 'bg-gradient-to-br from-red-600 to-rose-900 shadow-[0_0_15px_rgba(239,68,68,0.5)] border border-red-400/40 text-white' 
                 : 'bg-gradient-to-br from-amber-400 to-amber-600 shadow-[0_0_15px_rgba(245,158,11,0.3)] border border-amber-300/60 text-amber-950'
             }`}>
-              {/* Spider Mask Icon / Camera Icon */}
               {isSpider ? (
                 <svg className="w-6 h-6 fill-current animate-pulse" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3 0 .8-.31 1.52-.82 2.05l1.6 3.2c.14.28.02.62-.26.76-.28.14-.62.02-.76-.26L13.2 10.6C12.83 10.85 12.43 11 12 11s-.83-.15-1.2-.4l-1.56 3.15c-.14.28-.48.4-.76.26-.28-.14-.4-.48-.26-.76l1.6-3.2C9.31 9.52 9 8.8 9 8c0-1.66 1.34-3 3-3zm-4 8c0-.55.45-1 1-1s1 .45 1 1v2c0 .55-.45 1-1 1s-1-.45-1-1v-2zm8 0c0-.55.45-1 1-1s1 .45 1 1v2c0 .55-.45 1-1 1s-1-.45-1-1v-2z"/>
                 </svg>
               ) : (
-                <Camera className="w-5 h-5 text-amber-950" />
+                <Home className="w-5 h-5 text-amber-950" />
               )}
             </div>
 
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-black text-lg tracking-tight">
+                <span className="font-black text-base sm:text-lg tracking-tight">
                   PROJECT <span className={isSpider ? 'text-red-500 font-extrabold' : 'text-amber-600 font-extrabold'}>SPIDER-SENSE</span>
                 </span>
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
@@ -91,13 +108,13 @@ export function Header({
                     ? 'bg-red-950/80 text-red-300 border-red-800' 
                     : 'bg-amber-100 text-amber-800 border-amber-300'
                 }`}>
-                  Dual-Phase AI
+                  Work-Life Balance AI
                 </span>
               </div>
               <p className={`text-xs ${isSpider ? 'text-slate-400' : 'text-amber-800/80'} italic`}>
                 {isSpider 
-                  ? '"With great power comes great deadlines."' 
-                  : '"Aunt May’s wheatcakes & freelance photos."'}
+                  ? 'Spider-Man Mode: Focus on Career, Projects & Deadlines' 
+                  : 'Peter Parker Mode: Focus on Life, Errands, Health & Family'}
               </p>
             </div>
           </div>
@@ -121,7 +138,7 @@ export function Header({
               ? 'bg-slate-900/90 border-red-950/80 shadow-black/60' 
               : 'bg-[#F5EDE0] border-amber-200 shadow-amber-900/5'
           }`}>
-            {/* Peter Parker Button */}
+            {/* Peter Parker Button (Personal / Life) */}
             <button
               onClick={() => {
                 sound.playModeSwitch(false);
@@ -134,13 +151,13 @@ export function Header({
               }`}
             >
               <div className="flex items-center gap-1">
-                <Camera className="w-3.5 h-3.5" />
+                <Home className="w-3.5 h-3.5 text-amber-900" />
                 <Pizza className="w-3 h-3 text-red-500" />
               </div>
-              <span>Peter Parker (Life)</span>
+              <span>Peter Parker (Personal)</span>
             </button>
 
-            {/* Spider-Man Button */}
+            {/* Spider-Man Button (Professional / Work) */}
             <button
               onClick={() => {
                 sound.playModeSwitch(true);
@@ -152,16 +169,37 @@ export function Header({
                   : 'text-amber-800/80 hover:text-amber-950 hover:bg-amber-100/60'
               }`}
             >
-              <span className="w-2 h-2 rounded-full bg-red-400 animate-ping inline-block" />
+              <Briefcase className="w-3.5 h-3.5" />
               <span>Spider-Man (Work)</span>
-              <ShieldAlert className="w-3.5 h-3.5" />
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping inline-block" />
             </button>
           </div>
         </div>
 
-        {/* Action Controls & Utilities */}
-        <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-          {/* Split / Multiverse View Toggle */}
+        {/* Action Controls: Reminders, Multiverse View, Sound, Reset */}
+        <div className="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
+          
+          {/* Notification / Reminder Button */}
+          <button
+            onClick={notifPermission === 'granted' ? onTestReminder : handleEnableNotifications}
+            title={notifPermission === 'granted' ? 'Notifications active! Click to test reminder.' : 'Click to enable desktop task reminders'}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+              notifPermission === 'granted'
+                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/20'
+                : isSpider
+                  ? 'bg-slate-900 text-slate-300 border-slate-700 hover:border-red-600 hover:text-red-300'
+                  : 'bg-amber-50 text-amber-900 border-amber-300 hover:bg-amber-100'
+            }`}
+          >
+            {notifPermission === 'granted' ? (
+              <BellRing className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+            ) : (
+              <Bell className="w-3.5 h-3.5" />
+            )}
+            <span className="hidden sm:inline">{notifPermission === 'granted' ? 'Reminders On' : 'Enable Reminders'}</span>
+          </button>
+
+          {/* Multiverse Split View Toggle */}
           <button
             onClick={onViewModeToggle}
             title={viewMode === 'split' ? 'Switch to Active Mode Focus' : 'Switch to Multiverse Split View'}
@@ -201,7 +239,7 @@ export function Header({
           <button
             onClick={onResetData}
             disabled={isResetting}
-            title="Reset to Spider-Sense Demo Tasks"
+            title="Reset to Sample Tasks"
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
               isSpider
                 ? 'bg-slate-900/70 text-slate-300 border-slate-800 hover:border-red-800 hover:text-red-300'
@@ -210,7 +248,7 @@ export function Header({
           >
             <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Reset</span>
-            <span>Demo Data</span>
+            <span>Tasks</span>
           </button>
         </div>
 

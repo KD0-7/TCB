@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { SpiderSenseAnalysis } from '@/lib/types';
-import { AlertOctagon, Heart, Coffee, ShieldAlert, Sparkles, X } from 'lucide-react';
+import { Coffee, ShieldAlert, Sparkles, X, Heart } from 'lucide-react';
 import { sound } from '@/lib/sound';
 
 interface SpiderSenseWarningModalProps {
@@ -28,7 +28,7 @@ export function SpiderSenseWarningModal({
       {/* Spider-Sense Radiation / Comic Tingling Aura */}
       <div className="relative w-full max-w-lg bg-gradient-to-b from-slate-900 via-slate-950 to-red-950/40 border-2 border-red-500 rounded-3xl p-6 sm:p-7 text-white shadow-[0_0_50px_rgba(239,68,68,0.4)] overflow-hidden">
         
-        {/* Animated Spider-Sense Wave Lines (Comic Style) */}
+        {/* Animated Spider-Sense Wave Lines */}
         <div className="absolute top-2 left-1/2 -translate-x-1/2 flex items-center gap-4 text-red-500 font-black text-xl tracking-widest select-none pointer-events-none animate-bounce">
           <span className="scale-x-[-1] animate-pulse">⚡~⚡</span>
           <span className="text-xs uppercase bg-red-600 text-white font-black px-3 py-1 rounded-full shadow-lg shadow-red-600/50">
@@ -48,7 +48,6 @@ export function SpiderSenseWarningModal({
         {/* Spider Avatar with Tingling Glow */}
         <div className="flex flex-col items-center text-center mt-6">
           <div className="relative mb-3">
-            {/* Pulsing Aura Rings */}
             <div className="absolute inset-0 rounded-full bg-red-600/30 blur-xl animate-ping" />
             <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-tr from-red-600 via-rose-600 to-red-500 flex items-center justify-center border-2 border-red-400 shadow-[0_0_25px_rgba(239,68,68,0.7)]">
               <svg className="w-10 h-10 fill-white" viewBox="0 0 24 24">
@@ -58,22 +57,22 @@ export function SpiderSenseWarningModal({
           </div>
 
           <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase drop-shadow-md">
-            {warningTitle || 'CRITICAL WORKAHOLIC IMBALANCE!'}
+            {warningTitle || 'WORKAHOLIC OVERLOAD DETECTED!'}
           </h3>
 
           <p className="text-xs text-red-400 font-bold uppercase tracking-wider mt-0.5">
-            Biometric Workload Alert • AI Behavioral Monitor
+            Work-Life Behavioral Monitor • Burnout Prevention
           </p>
         </div>
 
         {/* Workload Metric Readout */}
         <div className="grid grid-cols-3 gap-2 my-4 bg-slate-900/90 border border-red-950 p-3 rounded-2xl text-center">
           <div>
-            <div className="text-[10px] text-slate-400 uppercase font-semibold">Spider (Work)</div>
+            <div className="text-[10px] text-slate-400 uppercase font-semibold">Work (Spider)</div>
             <div className="text-lg font-black text-red-500">{workloadStats.workCount} Tasks</div>
           </div>
           <div className="border-x border-slate-800">
-            <div className="text-[10px] text-slate-400 uppercase font-semibold">Peter (Life)</div>
+            <div className="text-[10px] text-slate-400 uppercase font-semibold">Life (Peter)</div>
             <div className="text-lg font-black text-amber-400">{workloadStats.personalCount} Tasks</div>
           </div>
           <div>
@@ -90,7 +89,7 @@ export function SpiderSenseWarningModal({
             <span className="text-xl">🎙️</span>
             <div>
               <span className="font-extrabold text-red-400 text-xs uppercase tracking-wider block mb-1">
-                Spider-Man says:
+                Spider-Sense Coach says:
               </span>
               <p className="italic font-medium text-slate-100">
                 &ldquo;{warningMessage}&rdquo;
@@ -99,7 +98,7 @@ export function SpiderSenseWarningModal({
           </div>
         </div>
 
-        {/* Spider-Man Iconic Wisdom Quote */}
+        {/* Wisdom Quote */}
         <div className="text-center my-3 text-xs text-amber-300 font-semibold italic flex items-center justify-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           <span>&ldquo;{spiderWisdomQuote}&rdquo;</span>
@@ -116,7 +115,7 @@ export function SpiderSenseWarningModal({
             className="w-full sm:w-1/2 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-amber-950 font-bold text-xs shadow-lg shadow-amber-500/20 hover:scale-[1.02] transition-transform"
           >
             <Coffee className="w-4 h-4" />
-            <span>Add Self-Care Task</span>
+            <span>Add Self-Care Task Now</span>
           </button>
 
           <button
@@ -127,7 +126,7 @@ export function SpiderSenseWarningModal({
             className="w-full sm:w-1/2 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition-colors"
           >
             <ShieldAlert className="w-4 h-4 text-red-400" />
-            <span>I’ll Take a Breather</span>
+            <span>I’ll Take a Break</span>
           </button>
         </div>
 

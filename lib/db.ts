@@ -2,107 +2,117 @@ import fs from 'fs';
 import path from 'path';
 import { Task, TaskMode, TaskStatus, TaskPriority } from './types';
 
-// Initial lore-accurate sample tasks for Project Spider-Sense
+// Realistic everyday productivity tasks for real people (Spider-Man themed duality)
 const DEFAULT_TASKS: Task[] = [
+  // Spider-Man Mode: Professional / Career / Deep Work
   {
-    id: 'spidey-1',
-    title: 'Oscorp Industrial Security Audit Report',
-    description: 'Finalize the thermal variance analysis and email Norman Osborn before the 3 PM board review.',
+    id: 'work-1',
+    title: 'Finalize Q4 strategic presentation deck',
+    description: 'Complete slide review, incorporate marketing KPIs, and send to the management team before 3 PM.',
     mode: 'SPIDER',
     status: 'PENDING',
     priority: 'HIGH',
-    category: 'Oscorp',
-    deadline: new Date(Date.now() + 1000 * 60 * 60 * 4).toISOString(),
+    category: 'Work / Strategy',
+    deadline: new Date(Date.now() + 1000 * 60 * 60 * 3).toISOString(),
+    reminderTime: new Date(Date.now() + 1000 * 60 * 60 * 2.5).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
   },
   {
-    id: 'spidey-2',
-    title: 'Refill Web-Shooter fluid cartridges',
-    description: 'Synthesize new high-tensile shear-thinning nylon formula in the lab before night patrol.',
+    id: 'work-2',
+    title: 'Code review & approve staging pull requests',
+    description: 'Verify unit test coverage and approve backend payment integration changes on GitHub.',
     mode: 'SPIDER',
     status: 'PENDING',
     priority: 'HIGH',
-    category: 'Vigilante Tech',
-    deadline: new Date(Date.now() + 1000 * 60 * 60 * 8).toISOString(),
+    category: 'Work / Engineering',
+    deadline: new Date(Date.now() + 1000 * 60 * 60 * 6).toISOString(),
+    reminderTime: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
   },
   {
-    id: 'spidey-3',
-    title: 'Respond to Tony Stark’s encrypted memo',
-    description: 'Review Stark Industries nanotech schematics and reply via Stark Net relay.',
+    id: 'work-3',
+    title: 'Team sprint retrospective & planning notes',
+    description: 'Summarize sprint velocity metrics and outline blockers for tomorrow morning standup.',
     mode: 'SPIDER',
     status: 'COMPLETED',
     priority: 'MEDIUM',
-    category: 'Avengers',
+    category: 'Work / Meetings',
     deadline: null,
+    reminderTime: null,
     createdAt: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
   },
   {
-    id: 'spidey-4',
-    title: 'Monitor NYPD frequency channel 4',
-    description: 'Cross-reference dispatch reports near Chinatown for suspicious seismic disturbances.',
+    id: 'work-4',
+    title: 'Send quarterly expense reports to accounting',
+    description: 'Attach receipts for software subscriptions and client travel reimbursements.',
     mode: 'SPIDER',
     status: 'PENDING',
     priority: 'MEDIUM',
-    category: 'Patrol',
+    category: 'Work / Finance',
     deadline: null,
+    reminderTime: null,
     createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
   },
+
+  // Peter Parker Mode: Personal Life / Family / Self-Care / Errands
   {
-    id: 'peter-1',
-    title: "Pick up Aunt May's prescription medicine",
-    description: 'Stop by Forest Hills Pharmacy on 71st Continental Ave before 6 PM.',
+    id: 'life-1',
+    title: 'Pick up weekly groceries & healthy meal prep',
+    description: 'Fresh vegetables, fruits, protein, and olive oil from the local market on the drive home.',
     mode: 'PETER',
     status: 'PENDING',
     priority: 'HIGH',
-    category: 'Family & Health',
-    deadline: new Date(Date.now() + 1000 * 60 * 60 * 6).toISOString(),
+    category: 'Life / Groceries',
+    deadline: new Date(Date.now() + 1000 * 60 * 60 * 5).toISOString(),
+    reminderTime: new Date(Date.now() + 1000 * 60 * 60 * 4.5).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
   },
   {
-    id: 'peter-2',
-    title: 'Submit Daily Bugle front-page photo negatives',
-    description: 'Drop off high-angle shots of the bridge to J. Jonah Jameson. Rent is due tomorrow!',
+    id: 'life-2',
+    title: 'Schedule annual dental & vision checkup',
+    description: 'Call the clinic receptionist and book an appointment for next Tuesday afternoon.',
     mode: 'PETER',
     status: 'COMPLETED',
     priority: 'HIGH',
-    category: 'Daily Bugle',
+    category: 'Life / Health',
     deadline: null,
+    reminderTime: null,
     createdAt: new Date(Date.now() - 1000 * 60 * 300).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
   },
   {
-    id: 'peter-3',
-    title: "Retrieve backpack webbed to 34th St alley",
-    description: 'Contains science homework, spare clothes, and camera flash battery. Web dissolves in 2 hours!',
+    id: 'life-3',
+    title: 'Call parents & catch up with family',
+    description: 'Spend 20 uninterrupted minutes checking in with family over weekend plans.',
     mode: 'PETER',
     status: 'PENDING',
     priority: 'MEDIUM',
-    category: 'Personal Life',
-    deadline: new Date(Date.now() + 1000 * 60 * 90).toISOString(),
+    category: 'Life / Family',
+    deadline: new Date(Date.now() + 1000 * 60 * 120).toISOString(),
+    reminderTime: new Date(Date.now() + 1000 * 60 * 110).toISOString(),
     createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
   },
   {
-    id: 'peter-4',
-    title: 'Joe’s Pizza run for Queens apartment',
-    description: '29-minute guarantee! Grab pepperoni and garlic knots for relaxing evening with Ned & MJ.',
+    id: 'life-4',
+    title: 'Evening 45-minute gym workout & stretch',
+    description: 'Full-body functional training session followed by foam rolling to decompress from screen time.',
     mode: 'PETER',
     status: 'PENDING',
     priority: 'LOW',
-    category: 'Self-Care',
+    category: 'Life / Fitness',
     deadline: null,
+    reminderTime: null,
     createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
     updatedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
   },
 ];
 
-// Persistent File-backed storage for local dev / demo resilience
 const DATA_FILE = path.join(process.cwd(), '.spidersense-tasks.json');
 
 function readTasksFromDisk(): Task[] {
@@ -115,7 +125,7 @@ function readTasksFromDisk(): Task[] {
       }
     }
   } catch {
-    // fallback to defaults
+    // fallback
   }
   return DEFAULT_TASKS;
 }
@@ -128,7 +138,7 @@ function writeTasksToDisk(tasks: Task[]): void {
   }
 }
 
-// In-memory cache for fast lookups
+// In-memory cache for fast operations
 let inMemoryTasks: Task[] = readTasksFromDisk();
 
 export const taskDb = {
@@ -140,7 +150,8 @@ export const taskDb = {
     if (filter?.status && filter.status !== 'ALL') {
       result = result.filter(t => t.status === filter.status);
     }
-    // Sort pending first, high priority first, then newest
+    
+    // Sort pending first, then high priority, then deadline/createdAt
     const priorityWeight: Record<TaskPriority, number> = { HIGH: 3, MEDIUM: 2, LOW: 1 };
     result.sort((a, b) => {
       if (a.status !== b.status) {
@@ -166,8 +177,9 @@ export const taskDb = {
       mode: data.mode,
       status: data.status || 'PENDING',
       priority: data.priority || 'MEDIUM',
-      category: data.category?.trim() || (data.mode === 'SPIDER' ? 'Work / Heroics' : 'Life / Errands'),
+      category: data.category?.trim() || (data.mode === 'SPIDER' ? 'Work & Career' : 'Life & Errands'),
       deadline: data.deadline || null,
+      reminderTime: data.reminderTime || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -186,8 +198,9 @@ export const taskDb = {
         mode: data.mode,
         status: data.status || 'PENDING',
         priority: data.priority || 'MEDIUM',
-        category: data.category?.trim() || (data.mode === 'SPIDER' ? 'Work / Heroics' : 'Life / Errands'),
+        category: data.category?.trim() || (data.mode === 'SPIDER' ? 'Work & Career' : 'Life & Errands'),
         deadline: data.deadline || null,
+        reminderTime: data.reminderTime || null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };

@@ -35,7 +35,7 @@ export async function processSpiderSenseBrainDump(payload: BrainDumpPayload): Pr
     }
   }
 
-  // 3. Robust Built-in Spider-Sense Heuristic NLP Engine (Guaranteed zero-crash demo)
+  // 3. Robust Built-in Spider-Sense Heuristic NLP Engine (Guaranteed zero-crash demo for real people)
   return runHeuristicSpiderSense(trimmed, existingTasks);
 }
 
@@ -54,7 +54,7 @@ async function callOpenAIAPI(text: string, existingTasks: Task[], apiKey: string
       model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: `Here is my chaotic daily brain dump:\n"${text}"` }
+        { role: 'user', content: `Here is my daily to-do brain dump:\n"${text}"` }
       ],
       response_format: { type: 'json_object' },
       temperature: 0.3,
@@ -113,61 +113,77 @@ async function callGeminiAPI(text: string, existingTasks: Task[], apiKey: string
 }
 
 // -------------------------------------------------------------
-// Shared Prompt Builder
+// Shared Prompt Builder (For Everyday People, Spider-Man Themed)
 // -------------------------------------------------------------
 function buildSystemPrompt(existingTasks: Task[]): string {
   const existingSpider = existingTasks.filter(t => t.mode === 'SPIDER' && t.status === 'PENDING').length;
   const existingPeter = existingTasks.filter(t => t.mode === 'PETER' && t.status === 'PENDING').length;
 
-  return `You are "Spider-Sense AI", an intelligent behavioral monitor and work-life balance guardian built for Peter Parker / Spider-Man.
+  return `You are "Spider-Sense AI", an intelligent behavioral monitor and work-life balance guardian built for everyday people (professionals, students, creators, and busy parents).
+The Spider-Man universe is used as an engaging, motivational theme and metaphor:
+- "PETER" mode: Personal Life, Self-Care, Family & Friends, Health, Medical/Doctor, Groceries, Fitness, Errands, Chores, Hobbies, and Relaxation.
+- "SPIDER" mode: Professional Work, Career Deadlines, Deep Work, Client Projects, Coding/Engineering, Meetings, Admin, and High-Priority Deliverables.
 
-Your job:
-1. Parse chaotic unstructured daily brain dumps into distinct actionable tasks.
+The user is a normal real-world person organizing their daily tasks.
+
+Your mission:
+1. Parse chaotic unstructured daily brain dumps into individual, clean, actionable tasks.
 2. Auto-categorize each task into:
-   - "PETER" mode: Personal, self-care, family, health, relationships, hobbies, chores, errands, rest.
-   - "SPIDER" mode: Professional, work, career deadlines, high-priority projects, client deliverables, vigilante duties.
+   - "PETER" mode: For personal life, home, self-care, family, health.
+   - "SPIDER" mode: For career, job, projects, deadlines, clients.
 3. Assign priority: "LOW", "MEDIUM", or "HIGH".
-4. Extract explicit or implicit deadlines/times (e.g. "3 PM", "by evening", "tomorrow", or null).
-5. Assign a concise category tag (e.g. "Oscorp", "Daily Bugle", "Family", "Health", "Avengers Tech", "Self-Care", "Errands").
+4. Extract explicit or implicit deadlines/times (e.g. "3 PM", "by 5", "tomorrow morning", or null).
+5. Suggest realistic reminder times (e.g. 30 minutes before deadlines, or specific time if mentioned).
+6. Assign a concise category tag (e.g. "Work / Strategy", "Work / Engineering", "Life / Health", "Life / Groceries", "Life / Family", "Life / Fitness").
 
-WORKLOAD & IMBALANCE MONITORING:
+WORKLOAD & BURNOUT MONITORING:
 Current active workload already on the user's board:
-- Spider-Man (Work) pending tasks: ${existingSpider}
-- Peter Parker (Life) pending tasks: ${existingPeter}
+- Work (Spider Mode) pending tasks: ${existingSpider}
+- Personal Life (Peter Mode) pending tasks: ${existingPeter}
 
 Analyze the combined workload of existing tasks + newly extracted tasks.
-If the ratio of SPIDER (Work) tasks is >= 65% of total, OR if there are 4+ work tasks and 0-1 personal tasks, or if the user is neglecting health/rest:
+If the ratio of Work (Spider) tasks is >= 65% of total, OR if there are 4+ work tasks and 0-1 personal tasks, or if the user has zero rest/food/exercise scheduled:
 - Set warningTriggered = true
-- Set warningTitle = "SPIDER-SENSE WARNING: TINGLING AT MAXIMUM!"
-- Set warningMessage = A personalized, witty, and compassionate alert written in the authentic, humorous voice of Peter Parker / Spider-Man, reminding them that "with great power comes great responsibility... to yourself. Take a break!" Mention specific details from their tasks.
+- Set warningTitle = "SPIDER-SENSE WARNING: WORKAHOLIC OVERLOAD DETECTED!"
+- Set warningMessage = A personalized, witty, and compassionate alert written in the authentic, humorous, inspiring voice of Spider-Man reminding the user: "With great responsibility comes great responsibility... to yourself. Take a break!" Reference their actual tasks.
 If balanced:
 - warningTriggered = false
-- warningTitle = "Spider-Sense Equilibrium: Stable"
-- warningMessage = Spider-Man approving of good balance.
+- warningTitle = "Spider-Sense Equilibrium: In Harmony"
+- warningMessage = Spider-Man praising their healthy work-life balance.
 
 You MUST respond strictly with this JSON format:
 {
   "extractedTasks": [
     {
-      "title": "Finish Oscorp financial report",
-      "description": "Board review deadline at 3 PM",
+      "title": "Finalize client presentation deck",
+      "description": "Include Q4 growth metrics and send before 3 PM",
       "mode": "SPIDER",
       "priority": "HIGH",
-      "category": "Oscorp",
-      "deadline": "3:00 PM today"
+      "category": "Work / Client",
+      "deadline": "3:00 PM today",
+      "reminderTime": "2:30 PM"
+    },
+    {
+      "title": "Pick up groceries and prescription medicine",
+      "description": "Stop by market on the way home",
+      "mode": "PETER",
+      "priority": "HIGH",
+      "category": "Life / Health",
+      "deadline": "6:00 PM",
+      "reminderTime": "5:30 PM"
     }
   ],
-  "warningTriggered": true,
-  "warningTitle": "Spider-Sense Warning: Extreme Workload Detected!",
-  "warningMessage": "Whoa, hold your web-shooters! You've got 5 massive work deadlines and zero time for pizza with Aunt May. Even the Avengers need sleep!",
+  "warningTriggered": false,
+  "warningTitle": "Spider-Sense Equilibrium: In Harmony",
+  "warningMessage": "Awesome rhythm! You're taking care of business while protecting your personal wellness.",
   "workloadStats": {
-    "workCount": 5,
-    "personalCount": 1,
-    "imbalanceRatio": 0.83,
-    "equilibriumScore": 34,
-    "diagnosis": "Severe Work Overload"
+    "workCount": 4,
+    "personalCount": 3,
+    "imbalanceRatio": 0.57,
+    "equilibriumScore": 86,
+    "diagnosis": "Healthy Work-Life Rhythm"
   },
-  "spiderWisdomQuote": "With great power comes great responsibility... to yourself."
+  "spiderWisdomQuote": "With great responsibility comes great responsibility... to yourself."
 }`;
 }
 
@@ -178,6 +194,7 @@ interface ExtractedTaskItem {
   priority: TaskPriority;
   category?: string;
   deadline?: string;
+  reminderTime?: string;
 }
 
 // -------------------------------------------------------------
@@ -197,6 +214,7 @@ function sanitizeAIOutput(
     priority: (t.priority === 'HIGH' || t.priority === 'MEDIUM' || t.priority === 'LOW') ? (t.priority as TaskPriority) : 'MEDIUM',
     category: t.category ? String(t.category) : undefined,
     deadline: t.deadline ? String(t.deadline) : undefined,
+    reminderTime: t.reminderTime ? String(t.reminderTime) : undefined,
   }));
 
   const existingSpider = existingTasks.filter(t => t.mode === 'SPIDER' && t.status === 'PENDING').length;
@@ -217,18 +235,18 @@ function sanitizeAIOutput(
   return {
     extractedTasks: sanitizedTasks,
     warningTriggered,
-    warningTitle: raw.warningTitle || (warningTriggered ? 'SPIDER-SENSE ALERT: CRITICAL WORK IMBALANCE!' : 'Spider-Sense: Balanced Web of Life'),
+    warningTitle: raw.warningTitle || (warningTriggered ? 'SPIDER-SENSE ALERT: WORKAHOLIC OVERLOAD DETECTED!' : 'Spider-Sense: Balanced Web of Life'),
     warningMessage: raw.warningMessage || (warningTriggered
-      ? 'Whoa there, web-slinger! My Spider-Sense is tingling off the charts. With great power comes great responsibility... to yourself. Take a break!'
-      : 'Web of Life looking stable! You are balancing both the mask and the man.'),
+      ? 'Whoa there! Your Spider-Sense is tingling at maximum! You have stacked up heavy work deadlines with zero personal time or self-care. With great responsibility comes great responsibility to yourself. Step away from the screen and take a breather!'
+      : 'Your Web of Life is looking great! You are balancing both career output and personal well-being.'),
     workloadStats: {
       workCount: totalSpider,
       personalCount: totalPeter,
       imbalanceRatio: ratio,
       equilibriumScore: eqScore,
-      diagnosis: raw.workloadStats?.diagnosis || (warningTriggered ? 'Overclocked Work Stress' : 'Harmonious Equilibrium'),
+      diagnosis: raw.workloadStats?.diagnosis || (warningTriggered ? 'High Burnout Risk' : 'Healthy Equilibrium'),
     },
-    spiderWisdomQuote: raw.spiderWisdomQuote || 'With great power comes great responsibility... to yourself.',
+    spiderWisdomQuote: raw.spiderWisdomQuote || 'With great responsibility comes great responsibility... to yourself.',
     providerUsed: provider,
   };
 }
@@ -237,7 +255,7 @@ function sanitizeAIOutput(
 // Offline / Fallback Heuristic Spider-Sense NLP Engine
 // -------------------------------------------------------------
 export function runHeuristicSpiderSense(text: string, existingTasks: Task[] = []): SpiderSenseAnalysis {
-  // Normalize honorifics to protect them from period splitting (e.g., Mr. Stark, Dr. Connors)
+  // Normalize honorifics to protect them from period splitting (e.g., Mr. Smith, Dr. Patel)
   let cleanText = text
     .replace(/Mr\.\s*/gi, 'Mr ')
     .replace(/Dr\.\s*/gi, 'Dr ')
@@ -252,33 +270,47 @@ export function runHeuristicSpiderSense(text: string, existingTasks: Task[] = []
 
   const clauses = rawSegments.length > 0 ? rawSegments : [text.trim()];
 
+  // Everyday Work / Professional Keywords
   const workKeywords = [
-    'oscorp', 'stark', 'report', 'deadline', 'meeting', 'client', 'presentation',
-    'pitch', 'code', 'deploy', 'finance', 'financial', 'bug', 'ticket', 'sprint',
-    'avengers', 'web-shooters', 'web shooters', 'suit', 'patrol', 'patrolling',
-    'boss', 'contract', 'audit', 'email', 'slides', 'project', 'server', 'firm', 'job'
+    'report', 'deadline', 'meeting', 'client', 'presentation', 'pitch', 'code', 'deploy',
+    'finance', 'financial', 'bug', 'ticket', 'sprint', 'boss', 'contract', 'audit', 'email',
+    'slides', 'project', 'server', 'job', 'deck', 'interview', 'marketing', 'sales', 'strategy',
+    'review', 'pr', 'pull request', 'architecture', 'retro', 'invoice', 'taxes', 'spreadsheet',
+    'standup', 'q1', 'q2', 'q3', 'q4', 'kpi', 'customer', 'deliverable', 'jira', 'github',
+    'slack', 'zoom', 'sync', 'exam', 'assignment', 'coursework', 'thesis', 'study'
   ];
 
+  // Everyday Personal / Life / Health / Errands Keywords
   const personalKeywords = [
-    'aunt may', 'may', 'medicine', 'prescription', 'pharmacy', 'wheatcakes', 'pizza',
-    'joe\'s', 'dinner', 'lunch', 'breakfast', 'groceries', 'supermarket', 'family',
-    'rest', 'sleep', 'nap', 'relax', 'gym', 'workout', 'laundry', 'clothes',
-    'apartment', 'rent', 'camera', 'photo', 'bugle', 'photos', 'ned', 'mj',
-    'homework', 'study', 'exam', 'class', 'backpack', 'movie', 'doctor', 'walk'
+    'groceries', 'grocery', 'supermarket', 'dinner', 'lunch', 'breakfast', 'meal prep',
+    'cooking', 'pharmacy', 'medicine', 'prescription', 'dentist', 'doctor', 'clinic', 'health',
+    'workout', 'gym', 'run', 'running', 'stretch', 'yoga', 'walk', 'dog', 'cat', 'pet',
+    'laundry', 'clean', 'cleaning', 'dishes', 'trash', 'apartment', 'house', 'rent', 'bank',
+    'family', 'mom', 'dad', 'parents', 'sister', 'brother', 'kids', 'call', 'relax', 'rest',
+    'nap', 'sleep', 'pizza', 'coffee', 'read', 'book', 'movie', 'show', 'netflix', 'haircut',
+    'car', 'mechanic', 'oil change', 'shopping', 'birthday', 'gift', 'vacation', 'hobby'
   ];
 
   const extractedTasks = clauses.map(clause => {
     const lower = clause.toLowerCase();
 
-    // Check deadlines
+    // Check deadlines & times
     let deadline: string | undefined = undefined;
+    let reminderTime: string | undefined = undefined;
+
     const timeMatch = lower.match(/(?:by|at|before)\s+(\d{1,2}(?::\d{2})?\s*(?:am|pm)?)/i);
     if (timeMatch) {
       deadline = timeMatch[1].toUpperCase();
+      reminderTime = `${timeMatch[1].toUpperCase()} (30 min before)`;
     } else if (lower.includes('today')) {
-      deadline = 'By End of Day';
+      deadline = 'Today (EOD)';
+      reminderTime = '5:00 PM';
     } else if (lower.includes('tomorrow')) {
       deadline = 'Tomorrow';
+      reminderTime = 'Tomorrow 9:00 AM';
+    } else if (lower.includes('tonight')) {
+      deadline = 'Tonight';
+      reminderTime = '7:00 PM';
     }
 
     // Determine mode
@@ -292,38 +324,54 @@ export function runHeuristicSpiderSense(text: string, existingTasks: Task[] = []
       if (lower.includes(kw)) peterScore += 2;
     }
 
-    // Bias check
     let mode: TaskMode = 'SPIDER';
-    let category = 'Heroics & Work';
+    let category = 'Work & Career';
 
     if (peterScore > spiderScore) {
       mode = 'PETER';
-      if (lower.includes('aunt may') || lower.includes('family')) category = 'Aunt May & Family';
-      else if (lower.includes('medicine') || lower.includes('pharmacy') || lower.includes('health')) category = 'Health & Care';
-      else if (lower.includes('pizza') || lower.includes('dinner') || lower.includes('lunch')) category = 'Joe\'s Pizza & Food';
-      else if (lower.includes('camera') || lower.includes('photo') || lower.includes('bugle')) category = 'Daily Bugle Photos';
-      else if (lower.includes('backpack') || lower.includes('laundry') || lower.includes('rent')) category = 'Queens Errands';
-      else category = 'Personal & Self-Care';
+      if (lower.includes('grocery') || lower.includes('groceries') || lower.includes('supermarket') || lower.includes('meal')) {
+        category = 'Life / Groceries & Food';
+      } else if (lower.includes('medicine') || lower.includes('doctor') || lower.includes('dentist') || lower.includes('health') || lower.includes('pharmacy')) {
+        category = 'Life / Health & Wellness';
+      } else if (lower.includes('gym') || lower.includes('workout') || lower.includes('run') || lower.includes('yoga')) {
+        category = 'Life / Fitness';
+      } else if (lower.includes('mom') || lower.includes('dad') || lower.includes('parents') || lower.includes('family') || lower.includes('call')) {
+        category = 'Life / Family & Friends';
+      } else if (lower.includes('laundry') || lower.includes('clean') || lower.includes('errand') || lower.includes('bank') || lower.includes('rent')) {
+        category = 'Life / Home & Errands';
+      } else {
+        category = 'Life / Self-Care & Hobbies';
+      }
     } else {
       mode = 'SPIDER';
-      if (lower.includes('oscorp')) category = 'Oscorp Industries';
-      else if (lower.includes('stark') || lower.includes('avengers')) category = 'Stark / Avengers Tech';
-      else if (lower.includes('web-shooters') || lower.includes('web shooters') || lower.includes('suit')) category = 'Spidey Tech & Lab';
-      else if (lower.includes('report') || lower.includes('financial') || lower.includes('audit')) category = 'Oscorp Deadlines';
-      else category = 'Professional Mission';
+      if (lower.includes('code') || lower.includes('deploy') || lower.includes('bug') || lower.includes('pr') || lower.includes('server')) {
+        category = 'Work / Engineering';
+      } else if (lower.includes('deck') || lower.includes('presentation') || lower.includes('slides') || lower.includes('pitch')) {
+        category = 'Work / Presentations';
+      } else if (lower.includes('client') || lower.includes('meeting') || lower.includes('sync') || lower.includes('interview')) {
+        category = 'Work / Meetings';
+      } else if (lower.includes('report') || lower.includes('financial') || lower.includes('budget') || lower.includes('invoice')) {
+        category = 'Work / Finance & Reports';
+      } else {
+        category = 'Work / Core Projects';
+      }
     }
 
     // Determine priority
     let priority: TaskPriority = 'MEDIUM';
-    if (lower.includes('urgent') || lower.includes('asap') || lower.includes('3 pm') || lower.includes('medicine') || lower.includes('critical') || lower.includes('report')) {
+    if (
+      lower.includes('urgent') || lower.includes('asap') || lower.includes('critical') ||
+      lower.includes('medicine') || lower.includes('doctor') || lower.includes('today') ||
+      lower.includes('deadline') || lower.includes('client')
+    ) {
       priority = 'HIGH';
-    } else if (lower.includes('maybe') || lower.includes('spare') || lower.includes('later') || lower.includes('pizza') || lower.includes('relax')) {
+    } else if (lower.includes('maybe') || lower.includes('spare') || lower.includes('later') || lower.includes('relax') || lower.includes('read')) {
       priority = 'LOW';
     }
 
     // Clean title
     let title = clause.charAt(0).toUpperCase() + clause.slice(1);
-    title = title.replace(/^(i need to|i have to|i should|must|gotta|please)\s+/i, '');
+    title = title.replace(/^(i need to|i have to|i should|must|gotta|please|remember to)\s+/i, '');
 
     return {
       title,
@@ -331,6 +379,7 @@ export function runHeuristicSpiderSense(text: string, existingTasks: Task[] = []
       priority,
       category,
       deadline,
+      reminderTime,
     };
   });
 
@@ -349,12 +398,12 @@ export function runHeuristicSpiderSense(text: string, existingTasks: Task[] = []
 
   const warningTriggered = ratio >= 0.7 || (totalSpider >= 4 && totalPeter <= 1);
 
-  let warningTitle = 'Spider-Sense Equilibrium: Stable';
-  let warningMessage = 'Great job web-head! Your personal and professional webs are harmoniously aligned.';
+  let warningTitle = 'Spider-Sense Equilibrium: In Harmony';
+  let warningMessage = 'Great rhythm! Your professional career focus and personal well-being are in healthy equilibrium.';
 
   if (warningTriggered) {
-    warningTitle = '⚡ SPIDER-SENSE WARNING: CRITICAL WORK IMBALANCE!';
-    warningMessage = `Whoa there, web-slinger! My Spider-Sense is tingling at hazardous frequencies. You have ${totalSpider} high-stakes work missions stacked up and barely ${totalPeter} personal tasks. Remember what Uncle Ben said: "With great power comes great responsibility... to yourself." Go grab a slice of Joe's Pizza and take a breather!`;
+    warningTitle = '⚡ SPIDER-SENSE WARNING: WORKAHOLIC OVERLOAD DETECTED!';
+    warningMessage = `Whoa there! Your Spider-Sense is tingling with alarm! You've stacked up ${totalSpider} demanding work tasks with only ${totalPeter} personal tasks scheduled. Remember: "With great responsibility comes great responsibility... to yourself." Take a breather, hydrate, and schedule time for rest!`;
   }
 
   return {
@@ -367,9 +416,9 @@ export function runHeuristicSpiderSense(text: string, existingTasks: Task[] = []
       personalCount: totalPeter,
       imbalanceRatio: ratio,
       equilibriumScore: eqScore,
-      diagnosis: warningTriggered ? 'Dangerous Workaholic Imbalance' : 'Equilibrium Maintained',
+      diagnosis: warningTriggered ? 'High Burnout & Overwork Risk' : 'Healthy Equilibrium',
     },
-    spiderWisdomQuote: 'With great power comes great responsibility... to yourself.',
+    spiderWisdomQuote: 'With great responsibility comes great responsibility... to yourself.',
     providerUsed: 'heuristic-engine',
   };
 }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Task, TaskMode } from '@/lib/types';
-import { Shield, Heart, Zap, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
+import { Briefcase, Heart, CheckCircle2 } from 'lucide-react';
 
 interface WebOfLifeChartProps {
   tasks: Task[];
@@ -26,7 +26,7 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
   const totalTasks = tasks.length;
   const totalCompleted = spiderCompleted + peterCompleted;
 
-  // Workload Ratio: Percentage of work (Spider-Man) tasks among pending tasks
+  // Workload Ratio: Percentage of work tasks among pending tasks
   const workRatio = totalPending > 0 
     ? Math.round((spiderPending / totalPending) * 100) 
     : 50;
@@ -39,39 +39,25 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
   const isCriticalImbalance = totalPending >= 3 && (workRatio >= 70 || workRatio <= 25);
   const isModerateImbalance = totalPending >= 2 && !isCriticalImbalance && (workRatio >= 60 || workRatio <= 40);
 
-  // Web Radar Chart Dimensions (8 axes: 4 Spidey, 4 Peter)
-  // Axes:
-  // 0: Career / Deadlines (Spidey)
-  // 1: Avengers / Tech (Spidey)
-  // 2: Oscorp Missions (Spidey)
-  // 3: City Patrol (Spidey)
-  // 4: Daily Bugle Photos (Peter)
-  // 5: Aunt May / Family (Peter)
-  // 6: Health & Rest (Peter)
-  // 7: Joe's Pizza / Fun (Peter)
-  
+  // Web Radar Chart Dimensions (8 axes for everyday people: 4 Work, 4 Personal)
   const spiderIntensity = Math.min(1, Math.max(0.15, spiderPending / 6));
   const peterIntensity = Math.min(1, Math.max(0.15, peterPending / 6));
-  const spiderDoneIntensity = Math.min(1, Math.max(0.15, spiderCompleted / 4));
-  const peterDoneIntensity = Math.min(1, Math.max(0.15, peterCompleted / 4));
 
-  // Compute SVG coordinates for the 8 axes on a 300x300 viewBox (center at 150, 150)
   const cx = 150;
   const cy = 150;
   const maxR = 100;
 
   const axes = [
     { label: 'Work Deadlines', mode: 'SPIDER', angle: -90, val: spiderIntensity },
-    { label: 'Stark / Tech', mode: 'SPIDER', angle: -45, val: spiderIntensity * 0.9 },
-    { label: 'Oscorp Projects', mode: 'SPIDER', angle: 0, val: spiderIntensity * 1.1 },
-    { label: 'City Patrol', mode: 'SPIDER', angle: 45, val: spiderIntensity * 0.8 },
-    { label: 'Daily Bugle', mode: 'PETER', angle: 90, val: peterIntensity * 0.85 },
-    { label: 'Aunt May / Family', mode: 'PETER', angle: 135, val: peterIntensity * 1.1 },
-    { label: 'Health & Self-Care', mode: 'PETER', angle: 180, val: peterIntensity },
-    { label: 'Joe\'s Pizza / Rest', mode: 'PETER', angle: 225, val: peterIntensity * 0.75 },
+    { label: 'Engineering / Projects', mode: 'SPIDER', angle: -45, val: spiderIntensity * 0.95 },
+    { label: 'Strategy / Planning', mode: 'SPIDER', angle: 0, val: spiderIntensity * 1.05 },
+    { label: 'Meetings / Clients', mode: 'SPIDER', angle: 45, val: spiderIntensity * 0.85 },
+    { label: 'Home & Errands', mode: 'PETER', angle: 90, val: peterIntensity * 0.9 },
+    { label: 'Family & Friends', mode: 'PETER', angle: 135, val: peterIntensity * 1.05 },
+    { label: 'Health & Wellness', mode: 'PETER', angle: 180, val: peterIntensity },
+    { label: 'Rest & Hobbies', mode: 'PETER', angle: 225, val: peterIntensity * 0.8 },
   ];
 
-  // Helper to compute (x, y) given angle in deg and radius
   const getPoint = (angleDeg: number, r: number) => {
     const rad = (angleDeg * Math.PI) / 180;
     return {
@@ -80,7 +66,6 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
     };
   };
 
-  // Generate web polygon points
   const webPolygonPoints = axes
     .map(a => {
       const pt = getPoint(a.angle, Math.min(maxR, Math.max(20, a.val * maxR)));
@@ -122,11 +107,11 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
                   ? 'bg-amber-500/20 text-amber-400 border-amber-500/50'
                   : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50'
             }`}>
-              {isCriticalImbalance ? '⚡ Imbalance Warning' : isModerateImbalance ? 'Shifting Balance' : 'Optimal Equilibrium'}
+              {isCriticalImbalance ? '⚡ Overwork Alert' : isModerateImbalance ? 'Shifting Balance' : 'Optimal Equilibrium'}
             </span>
           </div>
           <p className={`text-xs mt-0.5 ${isSpider ? 'text-slate-400' : 'text-amber-800/80'}`}>
-            Real-time biometric ratio of Spider-Man professional missions vs Peter Parker personal life.
+            Visual balance analysis comparing career deliverables (Spider-Man Mode) with personal wellness (Peter Parker Mode).
           </p>
         </div>
 
@@ -186,7 +171,7 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
               );
             })}
 
-            {/* Active Task Surface (The dynamic filled Web polygon) */}
+            {/* Active Task Surface */}
             <polygon
               points={webPolygonPoints}
               fill={isSpider ? 'rgba(239, 68, 68, 0.25)' : 'rgba(245, 158, 11, 0.28)'}
@@ -208,12 +193,12 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
                   fill={isWork ? '#EF4444' : '#F59E0B'}
                   stroke="#ffffff"
                   strokeWidth="1.5"
-                  className="transition-all duration-700 ease-out animate-pulse"
+                  className="transition-all duration-700 ease-out"
                 />
               );
             })}
 
-            {/* Center Spider Insignia Emblem */}
+            {/* Center Emblem */}
             <circle cx={cx} cy={cy} r="18" fill={isSpider ? '#7F1D1D' : '#FDE68A'} stroke={isSpider ? '#EF4444' : '#D97706'} strokeWidth="2" />
             <text
               x={cx}
@@ -230,10 +215,10 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
           {/* Web Labels */}
           <div className="flex items-center justify-between w-full text-[11px] font-bold px-4 mt-1">
             <span className="text-red-500 flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-red-500"></span> Spider-Man (Work)
+              <span className="w-2 h-2 rounded-full bg-red-500"></span> Career / Work Mode
             </span>
             <span className="text-amber-500 flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-amber-500"></span> Peter Parker (Life)
+              <span className="w-2 h-2 rounded-full bg-amber-500"></span> Personal / Life Mode
             </span>
           </div>
         </div>
@@ -245,11 +230,11 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
           <div>
             <div className="flex items-center justify-between text-xs font-bold mb-1.5">
               <span className="text-red-500 flex items-center gap-1">
-                <Shield className="w-3.5 h-3.5" />
-                <span>Work / Vigilante ({workRatio}%)</span>
+                <Briefcase className="w-3.5 h-3.5" />
+                <span>Work & Career ({workRatio}%)</span>
               </span>
               <span className="text-amber-600 flex items-center gap-1">
-                <span>Personal / Care ({lifeRatio}%)</span>
+                <span>Personal & Wellness ({lifeRatio}%)</span>
                 <Heart className="w-3.5 h-3.5" />
               </span>
             </div>
@@ -280,17 +265,17 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
             
             <p className={`text-[11px] mt-1.5 italic ${isSpider ? 'text-slate-400' : 'text-amber-900/70'}`}>
               {workRatio > 65 
-                ? '⚠️ Dangerously high work load. Spider-Sense advises taking immediate rest.' 
+                ? '⚠️ Workload is heavily dominating. Spider-Sense advises taking a break to restore energy.' 
                 : workRatio < 35 
-                  ? 'Relaxed Queens mode! Plenty of personal errands, but Oscorp projects await.'
-                  : '✨ Excellent equilibrium! Both the hero and the human are thriving.'}
+                  ? 'Relaxed personal pace! Great personal wellness, though work projects are waiting.'
+                  : '✨ Excellent work-life equilibrium! Career deliverables and personal well-being are in sync.'}
             </p>
           </div>
 
           {/* Breakdown Stats Cards */}
           <div className="grid grid-cols-2 gap-3">
             
-            {/* Spider-Man Stats Card */}
+            {/* Work Mode Stats */}
             <div className={`p-3 rounded-xl border transition-all ${
               isSpider 
                 ? 'bg-slate-950/80 border-red-900/50 shadow-inner' 
@@ -298,7 +283,7 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
             }`}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-red-500 uppercase tracking-wider flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5" /> Spider Mode
+                  <Briefcase className="w-3.5 h-3.5" /> Work Mode
                 </span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-500 font-bold">
                   {spiderTasks.length} Total
@@ -306,7 +291,7 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
               </div>
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="text-2xl font-black text-red-500">{spiderPending}</span>
-                <span className="text-xs text-slate-400">pending missions</span>
+                <span className="text-xs text-slate-400">pending tasks</span>
               </div>
               <div className="text-[11px] text-emerald-500 font-semibold mt-1 flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3" />
@@ -314,7 +299,7 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
               </div>
             </div>
 
-            {/* Peter Parker Stats Card */}
+            {/* Personal Mode Stats */}
             <div className={`p-3 rounded-xl border transition-all ${
               !isSpider 
                 ? 'bg-amber-100/60 border-amber-300 shadow-inner' 
@@ -322,7 +307,7 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
             }`}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1">
-                  <Heart className="w-3.5 h-3.5" /> Peter Mode
+                  <Heart className="w-3.5 h-3.5" /> Life Mode
                 </span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 font-bold">
                   {peterTasks.length} Total
@@ -340,7 +325,7 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
 
           </div>
 
-          {/* Quick Life Balance Tip */}
+          {/* Productivity Tip */}
           <div className={`text-xs p-2.5 rounded-lg border flex items-center gap-2 ${
             isSpider 
               ? 'bg-red-950/30 border-red-900/40 text-red-200' 
@@ -348,7 +333,7 @@ export function WebOfLifeChart({ tasks, currentMode }: WebOfLifeChartProps) {
           }`}>
             <span className="text-base">🕷️</span>
             <span className="font-medium">
-              Spider-Sense Rule: Keep your completed and pending ratio within 40-60% for peak physical & mental performance.
+              Spider-Sense Rule: Sustainable high performance requires scheduled recovery. Aim for a 50/50 balance score.
             </span>
           </div>
 

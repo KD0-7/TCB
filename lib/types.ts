@@ -1,4 +1,4 @@
-export type TaskMode = 'PETER' | 'SPIDER';
+export type TaskMode = 'PETER' | 'SPIDER'; // PETER = Personal/Life, SPIDER = Work/Career
 export type TaskStatus = 'PENDING' | 'COMPLETED';
 export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH';
 
@@ -11,6 +11,7 @@ export interface Task {
   priority: TaskPriority;
   category?: string | null;
   deadline?: string | null;
+  reminderTime?: string | null; // e.g. "2026-10-30T15:00" or time string
   createdAt: string;
   updatedAt?: string;
 }
@@ -23,6 +24,7 @@ export interface SpiderSenseAnalysis {
     priority: TaskPriority;
     category?: string;
     deadline?: string;
+    reminderTime?: string;
   }[];
   warningTriggered: boolean;
   warningTitle?: string;

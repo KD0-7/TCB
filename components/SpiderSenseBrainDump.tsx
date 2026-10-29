@@ -5,18 +5,16 @@ import { Task, TaskMode, TaskPriority, SpiderSenseAnalysis } from '@/lib/types';
 import { sound } from '@/lib/sound';
 import { 
   Sparkles, 
-  Send, 
   Loader2, 
   Zap, 
   Check, 
   X, 
   AlertTriangle, 
   Heart, 
-  Shield, 
-  Flame, 
+  Briefcase, 
   Clock, 
   Tag, 
-  Copy 
+  Bell
 } from 'lucide-react';
 
 interface SpiderSenseBrainDumpProps {
@@ -38,22 +36,22 @@ export function SpiderSenseBrainDump({
 
   const isSpider = currentMode === 'SPIDER';
 
-  // Hackathon Presentation Presets
+  // Realistic Everyday Presets for Normal People (Spider-Man Themed)
   const presets = [
     {
-      title: '🎯 The Classic Chaos',
+      title: '🎯 Everyday Balanced Day',
       badge: 'Balanced Day',
-      text: 'I need to finish the Oscorp financial report by 3 PM, grab Aunt May\'s medicine on the way home, fix my web-shooters, and email Mr. Stark.',
+      text: 'Need to finish the client presentation slides by 3 PM, buy groceries for dinner, review the team code pull requests, and book a dentist appointment for tomorrow.',
     },
     {
-      title: '⚡ Crunch Overload',
+      title: '⚡ Workaholic Crunch Overload',
       badge: 'Triggers Warning!',
-      text: 'Need to prepare the Oscorp Q3 earnings pitch deck, debug the Stark nanotech patch, finish board presentation slides, lead 4 PM client architecture sync, deploy hotfix to production cluster, and draft quarterly review report tonight.',
+      text: 'Finish quarterly budget deck, fix critical production auth bug, submit client invoice, review 35 unread emails, prepare executive sync presentation slides, and lead client onboarding meeting at 4 PM.',
     },
     {
-      title: '🍕 Queens Recovery Day',
+      title: '🌿 Personal Life & Wellness Day',
       badge: 'Self-Care Focus',
-      text: 'Bake Aunt May\'s special wheatcakes, photograph pigeon on Brooklyn Bridge for Daily Bugle, swing by Joe\'s Pizza for two pies, study biophysics with Ned, and get 8 hours of sleep.',
+      text: 'Meal prep healthy lunches for the week, 45-minute afternoon gym workout, do laundry, call my parents for a catch-up, and relax with an evening book.',
     },
   ];
 
@@ -84,7 +82,7 @@ export function SpiderSenseBrainDump({
       setAnalysisResult(analysis);
       setSelectedTasks(analysis.extractedTasks.map((_, i) => i));
 
-      // Check if Spider-Sense warning was triggered
+      // Trigger Spider-Sense warning if workload is imbalanced
       if (analysis.warningTriggered) {
         sound.playSpiderSenseTingle();
         onWarningTriggered(analysis);
@@ -127,8 +125,9 @@ export function SpiderSenseBrainDump({
         description: item.description || null,
         mode: item.mode,
         priority: item.priority,
-        category: item.category || (item.mode === 'SPIDER' ? 'Oscorp / Work' : 'Personal Errands'),
+        category: item.category || (item.mode === 'SPIDER' ? 'Work & Career' : 'Life & Errands'),
         deadline: item.deadline || null,
+        reminderTime: item.reminderTime || null,
         status: 'PENDING',
       };
     });
@@ -173,11 +172,11 @@ export function SpiderSenseBrainDump({
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                 isSpider ? 'bg-red-950/80 text-red-300 border-red-800' : 'bg-amber-100 text-amber-900 border-amber-300'
               }`}>
-                GenAI Task Parser & Monitor
+                Everyday Task Parser & Monitor
               </span>
             </h3>
             <p className={`text-xs ${isSpider ? 'text-slate-400' : 'text-amber-800/80'}`}>
-              Type or paste your messy thoughts. Spider-Sense AI parses tasks, categorizes dual modes, and enforces life balance.
+              Dump your disorganized thoughts or to-dos. Spider-Sense AI auto-categorizes them into Work vs Life, sets deadlines, and sets up reminders.
             </p>
           </div>
         </div>
@@ -189,10 +188,10 @@ export function SpiderSenseBrainDump({
         </div>
       </div>
 
-      {/* Hackathon Preset Pills */}
+      {/* Realistic Presets */}
       <div className="mb-3">
         <div className="text-[11px] font-bold uppercase tracking-wider mb-1.5 opacity-70 flex items-center gap-1">
-          <span>⚡ Hackathon Demo Presets (1-Click Fill):</span>
+          <span>⚡ 1-Click Everyday Presets:</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {presets.map((preset, index) => (
@@ -226,7 +225,7 @@ export function SpiderSenseBrainDump({
         <textarea
           value={inputText}
           onChange={e => setInputText(e.target.value)}
-          placeholder='e.g. "I need to finish the Oscorp financial report by 3 PM, grab Aunt May&apos;s medicine on the way home, fix my web-shooters, and email Mr. Stark."'
+          placeholder='e.g. "Need to finish client presentation slides by 3 PM, buy groceries for dinner, review code pull requests, and book a dentist appointment for tomorrow."'
           rows={3}
           className={`w-full text-xs sm:text-sm p-3.5 rounded-xl border focus:outline-none focus:ring-2 transition-all resize-none ${
             isSpider
@@ -238,7 +237,7 @@ export function SpiderSenseBrainDump({
         {/* Submit Button */}
         <div className="mt-2.5 flex items-center justify-between gap-3">
           <div className="text-[11px] opacity-60">
-            {inputText.length > 0 ? `${inputText.length} characters` : 'Tip: Dump multiple tasks in a single run.'}
+            {inputText.length > 0 ? `${inputText.length} characters` : 'Tip: Write naturally. The AI will extract each task and schedule reminders.'}
           </div>
 
           <div className="flex items-center gap-2">
@@ -268,7 +267,7 @@ export function SpiderSenseBrainDump({
               ) : (
                 <>
                   <Zap className="w-3.5 h-3.5 fill-current" />
-                  <span>Activate Spider-Sense AI</span>
+                  <span>Parse Tasks & Set Reminders</span>
                 </>
               )}
             </button>
@@ -293,7 +292,7 @@ export function SpiderSenseBrainDump({
           <div className="flex items-center justify-between border-b pb-3 mb-3 border-inherit">
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-extrabold text-sm uppercase">Spider-Sense Extracted Tasks</span>
+                <span className="font-extrabold text-sm uppercase">Parsed Everyday Tasks</span>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-500 font-bold">
                   {analysisResult.extractedTasks.length} Found
                 </span>
@@ -302,7 +301,7 @@ export function SpiderSenseBrainDump({
                 </span>
               </div>
               <p className="text-xs opacity-75 mt-0.5">
-                Review and customize before committing to your board.
+                Verify categories, priorities, and reminders before uploading to your board.
               </p>
             </div>
 
@@ -355,7 +354,13 @@ export function SpiderSenseBrainDump({
                         {task.deadline && (
                           <span className="flex items-center gap-1 font-semibold text-rose-500">
                             <Clock className="w-2.5 h-2.5" />
-                            <span>{task.deadline}</span>
+                            <span>Due: {task.deadline}</span>
+                          </span>
+                        )}
+                        {task.reminderTime && (
+                          <span className="flex items-center gap-1 font-semibold text-amber-500">
+                            <Bell className="w-2.5 h-2.5" />
+                            <span>Reminder: {task.reminderTime}</span>
                           </span>
                         )}
                       </div>
@@ -367,14 +372,14 @@ export function SpiderSenseBrainDump({
                     {/* Mode Toggle */}
                     <button
                       onClick={() => handleTaskModeToggle(idx)}
-                      title="Click to toggle Peter vs Spider Mode"
+                      title="Click to toggle Work vs Life Mode"
                       className={`text-[10px] font-bold px-2 py-1 rounded-md border flex items-center gap-1 transition-all ${
                         isItemSpider
                           ? 'bg-red-950/80 text-red-300 border-red-800'
                           : 'bg-amber-100 text-amber-900 border-amber-300'
                       }`}
                     >
-                      {isItemSpider ? <Shield className="w-3 h-3 text-red-400" /> : <Heart className="w-3 h-3 text-amber-600" />}
+                      {isItemSpider ? <Briefcase className="w-3 h-3 text-red-400" /> : <Heart className="w-3 h-3 text-amber-600" />}
                       <span>{isItemSpider ? 'Spider (Work)' : 'Peter (Life)'}</span>
                     </button>
 
@@ -403,7 +408,7 @@ export function SpiderSenseBrainDump({
           {/* Commit Actions */}
           <div className="mt-4 pt-3 border-t border-inherit flex items-center justify-between gap-3">
             <span className="text-xs opacity-75 font-medium">
-              {selectedTasks.length} of {analysisResult.extractedTasks.length} tasks ready to commit
+              {selectedTasks.length} of {analysisResult.extractedTasks.length} tasks ready to upload
             </span>
 
             <div className="flex items-center gap-2">
@@ -424,7 +429,7 @@ export function SpiderSenseBrainDump({
                 } disabled:opacity-50`}
               >
                 <Check className="w-3.5 h-3.5" />
-                <span>Add Selected to Board</span>
+                <span>Upload Selected to Board</span>
               </button>
             </div>
           </div>

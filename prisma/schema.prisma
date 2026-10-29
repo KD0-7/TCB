@@ -1,5 +1,5 @@
 // Prisma Schema for Project Spider-Sense
-// Dual-phase task management tool (Peter Parker vs Spider-Man)
+// Dual-phase task management tool for everyday people (Themed with Spider-Man work-life balance)
 
 generator client {
   provider = "prisma-client-js"
@@ -11,8 +11,8 @@ datasource db {
 }
 
 enum Mode {
-  PETER
-  SPIDER
+  PETER   // Personal, Family, Self-Care, Errands, Health, Hobbies
+  SPIDER  // Work, Career, Deadlines, Deep Work, High-Priority Deliverables
 }
 
 enum Status {
@@ -27,16 +27,17 @@ enum Priority {
 }
 
 model Task {
-  id          String    @id @default(cuid())
-  title       String
-  description String?
-  mode        Mode      @default(PETER)
-  status      Status    @default(PENDING)
-  priority    Priority  @default(MEDIUM)
-  category    String?   // e.g. "Oscorp", "Daily Bugle", "Family", "Health", "Avengers"
-  deadline    DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String    @id @default(cuid())
+  title        String
+  description  String?
+  mode         Mode      @default(PETER)
+  status       Status    @default(PENDING)
+  priority     Priority  @default(MEDIUM)
+  category     String?   // e.g. "Work / Engineering", "Personal / Health", "Finance", "Family"
+  deadline     DateTime?
+  reminderTime DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@index([mode])
   @@index([status])

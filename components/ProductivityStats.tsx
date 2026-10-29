@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Task, TaskMode } from '@/lib/types';
-import { Zap, Heart, CheckCircle2, Flame, Award, ShieldAlert } from 'lucide-react';
+import { Zap, Heart, CheckCircle2, Award, Briefcase } from 'lucide-react';
 
 interface ProductivityStatsProps {
   tasks: Task[];
@@ -30,7 +30,7 @@ export function ProductivityStats({ tasks, currentMode }: ProductivityStatsProps
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       
-      {/* 1. Web-Shooter Fluid Capacity (Spider-Man Work Progress) */}
+      {/* 1. Work Stamina & Completion Meter (Spider-Man Work Mode) */}
       <div className={`p-4 rounded-2xl border transition-all ${
         isSpider 
           ? 'bg-slate-900/80 border-red-900/40 text-slate-100 shadow-[0_4px_20px_rgba(239,68,68,0.06)]' 
@@ -42,33 +42,32 @@ export function ProductivityStats({ tasks, currentMode }: ProductivityStatsProps
               <Zap className="w-4 h-4 fill-current" />
             </div>
             <div>
-              <span className="text-xs font-black uppercase tracking-tight block">Web-Shooter Fluid</span>
-              <span className="text-[10px] text-slate-400">Work & Missions Output</span>
+              <span className="text-xs font-black uppercase tracking-tight block">Work Stamina Meter</span>
+              <span className="text-[10px] text-slate-400">Career & Deliverables Output</span>
             </div>
           </div>
           <span className="text-sm font-black text-red-500">{spiderPercent}%</span>
         </div>
 
-        {/* Liquid Fluid Gauge Bar */}
+        {/* Progress bar */}
         <div className="w-full h-3 bg-slate-800/60 rounded-full overflow-hidden p-0.5 border border-red-950/60">
           <div 
             className="h-full bg-gradient-to-r from-red-600 via-rose-500 to-red-400 rounded-full transition-all duration-700 relative overflow-hidden"
             style={{ width: `${spiderPercent}%` }}
           >
-            {/* Shimmer effect */}
             <div className="absolute inset-0 bg-white/20 -skew-x-12 animate-pulse" />
           </div>
         </div>
 
         <div className="flex items-center justify-between mt-2 text-[11px] text-slate-400">
-          <span>{spiderDone} of {spiderTotal} missions cleared</span>
+          <span>{spiderDone} of {spiderTotal} work tasks done</span>
           <span className="font-semibold text-red-400">
-            {spiderPercent === 100 ? '⚡ Maximum Web Fluid!' : 'Recharging...'}
+            {spiderPercent === 100 ? '⚡ Peak Output Achieved!' : 'In Progress...'}
           </span>
         </div>
       </div>
 
-      {/* 2. Aunt May's Peace of Mind (Peter Parker Life Progress) */}
+      {/* 2. Personal Wellness & Energy Meter (Peter Parker Mode) */}
       <div className={`p-4 rounded-2xl border transition-all ${
         !isSpider 
           ? 'bg-[#FFFDF9] border-amber-300 text-amber-950 shadow-[0_4px_20px_rgba(245,158,11,0.08)]' 
@@ -80,8 +79,8 @@ export function ProductivityStats({ tasks, currentMode }: ProductivityStatsProps
               <Heart className="w-4 h-4 fill-current" />
             </div>
             <div>
-              <span className="text-xs font-black uppercase tracking-tight block">Aunt May’s Peace</span>
-              <span className="text-[10px] text-slate-400">Personal Care & Errands</span>
+              <span className="text-xs font-black uppercase tracking-tight block">Personal Wellness Meter</span>
+              <span className="text-[10px] text-slate-400">Self-Care, Health & Errands</span>
             </div>
           </div>
           <span className="text-sm font-black text-amber-500">{peterPercent}%</span>
@@ -98,9 +97,9 @@ export function ProductivityStats({ tasks, currentMode }: ProductivityStatsProps
         </div>
 
         <div className="flex items-center justify-between mt-2 text-[11px] text-slate-400">
-          <span>{peterDone} of {peterTotal} errands done</span>
+          <span>{peterDone} of {peterTotal} life errands done</span>
           <span className="font-semibold text-amber-500">
-            {peterPercent === 100 ? '🥞 Wheatcakes Secured!' : 'Family Time Active'}
+            {peterPercent === 100 ? '✨ Recharged & Ready!' : 'Self-Care Active'}
           </span>
         </div>
       </div>
@@ -117,7 +116,7 @@ export function ProductivityStats({ tasks, currentMode }: ProductivityStatsProps
               <Award className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-xs font-black uppercase tracking-tight block">Daily Productivity</span>
+              <span className="text-xs font-black uppercase tracking-tight block">Overall Productivity</span>
               <span className="text-[10px] text-slate-400">Across Both Dimensions</span>
             </div>
           </div>

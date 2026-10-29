@@ -11,13 +11,13 @@ import {
   Edit3, 
   Clock, 
   Tag, 
-  Shield, 
   Heart, 
-  AlertCircle,
-  Camera,
-  Pizza,
-  Backpack,
-  Zap
+  Briefcase,
+  Bell,
+  Home,
+  Laptop,
+  ShoppingCart,
+  Users
 } from 'lucide-react';
 
 interface TaskCardProps {
@@ -26,6 +26,7 @@ interface TaskCardProps {
   onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
   onToggleMode: (id: string, currentMode: string) => void;
+  onTriggerReminder?: (task: Task) => void;
 }
 
 export function TaskCard({
@@ -34,6 +35,7 @@ export function TaskCard({
   onEdit,
   onDelete,
   onToggleMode,
+  onTriggerReminder,
 }: TaskCardProps) {
   const isSpider = task.mode === 'SPIDER';
   const isCompleted = task.status === 'COMPLETED';
@@ -43,10 +45,9 @@ export function TaskCard({
     sound.playWebThwip();
 
     if (!isCompleted) {
-      // Fire confetti burst when completing a task
       confetti({
-        particleCount: 35,
-        spread: 60,
+        particleCount: 30,
+        spread: 55,
         origin: { y: 0.7 },
         colors: isSpider ? ['#EF4444', '#DC2626', '#38BDF8'] : ['#F59E0B', '#D97706', '#10B981'],
       });
@@ -55,7 +56,6 @@ export function TaskCard({
     onToggleStatus(task.id, task.status);
   };
 
-  // Priority badge styling
   const priorityConfig: Record<TaskPriority, { label: string; color: string; bg: string; border: string }> = {
     HIGH: {
       label: 'High Priority',
@@ -79,14 +79,13 @@ export function TaskCard({
 
   const pConfig = priorityConfig[task.priority] || priorityConfig.MEDIUM;
 
-  // Icon for category
   const renderCategoryIcon = () => {
     const cat = (task.category || '').toLowerCase();
-    if (cat.includes('photo') || cat.includes('camera') || cat.includes('bugle')) return <Camera className="w-3 h-3" />;
-    if (cat.includes('pizza') || cat.includes('food')) return <Pizza className="w-3 h-3 text-red-500" />;
-    if (cat.includes('backpack') || cat.includes('errand')) return <Backpack className="w-3 h-3 text-amber-600" />;
-    if (cat.includes('family') || cat.includes('may')) return <Heart className="w-3 h-3 text-rose-500" />;
-    if (cat.includes('oscorp') || cat.includes('tech') || cat.includes('stark')) return <Zap className="w-3 h-3 text-red-400" />;
+    if (cat.includes('grocer') || cat.includes('food') || cat.includes('meal')) return <ShoppingCart className="w-3 h-3 text-amber-600" />;
+    if (cat.includes('family') || cat.includes('friend') || cat.includes('parents')) return <Users className="w-3 h-3 text-rose-500" />;
+    if (cat.includes('health') || cat.includes('doctor') || cat.includes('fitness')) return <Heart className="w-3 h-3 text-rose-500" />;
+    if (cat.includes('engineer') || cat.includes('code') || cat.includes('tech')) return <Laptop className="w-3 h-3 text-blue-400" />;
+    if (cat.includes('work') || cat.includes('client') || cat.includes('meet')) return <Briefcase className="w-3 h-3 text-red-400" />;
     return <Tag className="w-3 h-3" />;
   };
 
@@ -113,14 +112,14 @@ export function TaskCard({
               sound.playModeSwitch(task.mode === 'PETER');
               onToggleMode(task.id, task.mode);
             }}
-            title="Click to shift task persona (Peter vs Spidey)"
+            title="Click to shift between Work (Spider) and Personal (Peter) Mode"
             className={`flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full border transition-all ${
               isSpider
                 ? 'bg-red-950 text-red-300 border-red-800 hover:bg-red-900'
                 : 'bg-amber-100 text-amber-900 border-amber-300 hover:bg-amber-200'
             }`}
           >
-            {isSpider ? <Shield className="w-2.5 h-2.5 text-red-400" /> : <Heart className="w-2.5 h-2.5 text-amber-600" />}
+            {isSpider ? <Briefcase className="w-2.5 h-2.5 text-red-400" /> : <Home className="w-2.5 h-2.5 text-amber-600" />}
             <span>{isSpider ? 'SPIDER-MAN (WORK)' : 'PETER PARKER (LIFE)'}</span>
           </button>
 
@@ -130,8 +129,17 @@ export function TaskCard({
           </span>
         </div>
 
-        {/* Quick Edit & Delete Actions */}
+        {/* Quick Actions */}
         <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+          {onTriggerReminder && (
+            <button
+              onClick={() => onTriggerReminder(task)}
+              title="Test Task Reminder Now"
+              className="p-1 rounded-md hover:bg-slate-800/40 text-amber-400 hover:text-amber-300 transition-colors"
+            >
+              <Bell className="w-3.5 h-3.5" />
+            </button>
+          )}
           <button
             onClick={() => onEdit(task)}
             title="Edit Task"
@@ -180,19 +188,28 @@ export function TaskCard({
         </div>
       </div>
 
-      {/* Footer: Category & Deadline */}
-      <div className="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-inherit text-[11px] opacity-75">
+      {/* Footer: Category, Deadline & Reminder */}
+      <div className="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-inherit text-[11px] opacity-75 flex-wrap">
         <div className="flex items-center gap-1.5 truncate">
           {renderCategoryIcon()}
-          <span className="truncate font-medium">{task.category || (isSpider ? 'Heroics & Work' : 'Daily Life')}</span>
+          <span className="truncate font-medium">{task.category || (isSpider ? 'Work Deliverable' : 'Personal Life')}</span>
         </div>
 
-        {task.deadline && (
-          <div className="flex items-center gap-1 font-semibold text-rose-500 flex-shrink-0">
-            <Clock className="w-3 h-3" />
-            <span>{task.deadline.includes('T') ? new Date(task.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : task.deadline}</span>
-          </div>
-        )}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {task.reminderTime && (
+            <div className="flex items-center gap-1 font-semibold text-amber-500" title="Reminder Scheduled">
+              <Bell className="w-3 h-3" />
+              <span>{task.reminderTime.includes('T') ? new Date(task.reminderTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : task.reminderTime}</span>
+            </div>
+          )}
+
+          {task.deadline && (
+            <div className="flex items-center gap-1 font-semibold text-rose-500">
+              <Clock className="w-3 h-3" />
+              <span>{task.deadline.includes('T') ? new Date(task.deadline).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : task.deadline}</span>
+            </div>
+          )}
+        </div>
       </div>
 
     </div>
